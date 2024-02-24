@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''set up a basic Flask app'''
 from auth import Auth
-from flask import Flask, jsonify, request, make_response, abort
+from flask import Flask, jsonify, request, redirect, abort
 app = Flask(__name__)
 AUTH = Auth()
 
@@ -47,6 +47,16 @@ def logout() -> str:
         abort(403)
     AUTH.destroy_session(user.id)
     return redirect('/')
+
+
+@app.route("/profile")
+def profile() -> str:
+    ''' a session_id cookie. Use it to find the user.'''
+    session_id = request.cookies.get("session_id")
+    user = AUTH.get_user_from_session_id(session_id)
+    if not user:
+        abort(403)
+    return jsonify({"email": user.email}), 200
 
 
 if __name__ == "__main__":
