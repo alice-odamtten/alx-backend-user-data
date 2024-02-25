@@ -1,6 +1,5 @@
-123
 #!/usr/bin/env python3
-"""module for the function filter_datum"""
+"""module for filter_datum"""
 import re
 from typing import List
 import logging
@@ -13,7 +12,7 @@ PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
 def filter_datum(fields: List[str],
                  redaction: str, message: str,
                  separator: str) -> str:
-    """returns the log message obfuscated"""
+    """returns the log message"""
     for field in fields:
         pattern = re.compile(fr'{re.escape(field)}=.*?{re.escape(separator)}')
         replacement = f'{field}={redaction}{separator}'
@@ -22,8 +21,7 @@ def filter_datum(fields: List[str],
 
 
 class RedactingFormatter(logging.Formatter):
-    """ Redacting Formatter class
-        """
+    """ Redacting Formatter class"""
 
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
@@ -35,7 +33,7 @@ class RedactingFormatter(logging.Formatter):
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
-        """Formats a log record, redacting specified fields."""
+        """Formats a log record by redacting specified fields."""
         record.msg = filter_datum(self.fields, self.REDACTION,
                                   record.msg, self.SEPARATOR)
         return super().format(record)
